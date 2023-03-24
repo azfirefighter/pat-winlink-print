@@ -1,0 +1,157 @@
+#!/bin/bash
+
+# Variables
+#-------- CHANGE THESE AS NEEDED --------
+export CALLSIGN="CALLSIGNREPLACE" # MUST be in the pat-winlink-print directory, AND be a 758x120px PNG file!
+export WORKING="/home/jason/pat-winlink-print" # This is the directory where you installed all of this
+
+#-------- DON'T MESS AROUND BELOW HERE! --------
+export BUILD="build"
+export FILE=""
+export FILEPATH=""
+export FROM=""
+export PREC=""
+export PRECEDENCE=""
+export PRINTDOC=""
+export MID=""
+export FROM=""
+export PRECEDENCE=""
+export WHEN=$(date)
+export PID=""
+
+# Initial part of the HTML file as a template - works better than other solutions I've tried.
+
+template1 () {
+cat <<AAAA
+<!DOCTYPE html>
+<html>
+<head>
+<title>Winlink: $MID - $PRECEDENCE</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<style type="text/css">
+   @import url(https://www.w3schools.com/w3css/4/w3.css);
+   p {
+	margin-left: 24px;
+	margin-right: 24px;
+  }
+</style>
+</head>
+<body>
+<br>
+<div class="w3-panel w3-light-gray w3-border w3-border-black w3-center">
+	<p class="w3-text-white w3-xlarge" style="text-shadow:1px 1px 0 #808080"><img src="file:///$WORKING/$CALLSIGN.png" alt="$CALLSIGN" width="380px"></p>
+</div>
+<div class="w3-panel w3-black w3-center">
+	<p class="w3-text-white w3-xlarge" style="text-shadow:1px 1px 0 #808080">$PRECEDENCE de $FROM</p>
+</div>
+<div class="w3-container w3-border w3-border-black w3-small">
+	<p>
+AAAA
+}
+
+template2 () {
+cat << AAAA
+</p></div><div class="w3-container w3-border w3-border-black w3-small"><p>
+AAAA
+}
+
+template3 () {
+cat << AAAA
+</p>
+</div>
+<div class="w3-round-large w3-border w3-border-black w3-center w3-small">
+<p>Printed $WHEN.</p>
+</div>
+</body>
+</html>
+AAAA
+}
+
+
+# Make the temporary build directory to hold the files needed to build the output.  Skip it if it's already there.
+
+if [ ! -d $WORKING/$BUILD ]; then
+	mkdir $WORKING/$BUILD
+fi
+
+# Select the file to print and assign to FILE
+DIR=$(dialog --title "Select the appropriate directory." --dselect "/home/jason/.local/share/pat/mailbox/WY7EMT/" "30" "50" --stdout)
+DIR="$DIR/"
+
+FILEPATH=$(dialog --title "Select a file to print." --fselect $DIR  "100" "250" --stdout)
+FILE=$(basename "$FILEPATH")
+
+dialog --title "Working" --infobox "Performing our magic behind the scenes..." "15" "30"
+
+# Make sure that the line endings are correct for *nix
+dos2unix $FILEPATH > /dev/null 2>&1
+
+# Get the headers and write out to file
+cat $FILEPATH | sed '/^$/q' | sed 's/\n/<br>/ p' > $WORKING/$BUILD/$FILE.header
+
+
+# Grab the sender from the following header
+export MID=$(echo $FILE | cut -f 1 -d '.')
+
+mv $WORKING/$BUILD/$FILE.header $WORKING/$BUILD/$MID.header
+
+export FROM=$(cat $WORKING/$BUILD/$MID.header | sed -e '1,/\=\=/ s/X\-Sonic\-Dkim\-Sign.*//' | grep From - | sed 's/From\:\ //') # From
+
+# Grab the precendence from the following header
+PREC=$(cat $WORKING/$BUILD/$MID.header | grep X-Wl2kprecedence - | awk '{print $2}' FS=": ") # Initial Precedence
+
+# Convert precendence to all caps
+export PRECEDENCE=$(echo $PREC | tr '[:lower:]' '[:upper:]')
+
+# Remove blank lines
+sed -i '/^$/d' $WORKING/$BUILD/$MID.header
+
+# Add HTML to the end of each line
+sed -i 's/$/\<br\>/' $WORKING/$BUILD/$MID.header
+
+# Get the body and write out to file
+cat $FILEPATH | tr -d '\r' | sed '1,/^$/d' > $WORKING/$BUILD/$MID.body
+sed -i 's/$/\<br\>/' $WORKING/$BUILD/$MID.body
+
+# The output filename MUST stay the same!  I had to hard wire it into the python script that prints it.
+
+# Outputs the templates above with the variables shown. LEAVE THE FILE NAME ALONE - it's hardcoded into the print script!
+template1 $MID $FROM $WORKING $CALLSIGN $PRECEDENCE > $WORKING/$BUILD/print.html
+cat $WORKING/$BUILD/$MID.header >> $WORKING/$BUILD/print.html # Adds the information from the message's header
+template2 >> $WORKING/$BUILD/print.html
+cat $WORKING/$BUILD/$MID.body >> $WORKING/$BUILD/print.html # Adds the information from the message's body
+template3 $WHEN >> $WORKING/$BUILD/print.html
+
+
+dialog --title "Printing" --infobox "Your message will print to your default printer." "15" "20"
+
+# Print it!
+$WORKING/selenium-print.py > /dev/null 2>&1
+
+
+# Kill the pop-up browser window
+PID=$(ps -xa | grep "firefox --marionette" | head -n1 | awk '{print $1}' FS=" ")
+kill -9 $PID
+
+dialog --title "Printing Complete!" --msgbox "Click OK to end." "10" "20"
+
+# Clean up the build directory
+rm $WORKING/$BUILD/*
+
+# Clean up the variables
+unset CALLSIGN
+unset WORKING
+unset BUILD
+unset FILE
+unset FILEPATH
+unset FROM
+unset PREC
+unset PRECEDENCE
+unset PRINTDOC
+unset MID
+unset FROM
+unset PRECEDENCE
+unset WHEN
+unset PID

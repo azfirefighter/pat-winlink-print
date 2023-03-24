@@ -1,0 +1,73 @@
+AUTHOR
+---------------
+Jason Todd, WY7EMT
+
+WARRANTY
+---------------
+The scripts are not provided with any warranty for fitness for any purpose.
+I may or not update them.  I will provide any changes I make to the repo, but otherwise provide NO SUPPORT.  If you make it work better, I'd appreciate
+a heads up so I can roll your changes into the repo (with appropriate credit).
+
+LICENSES
+---------------
+If you received these scripts without a GNU GPLv3 license file, please obtain it at https://www.gnu.org/licenses/gpl-3.0.txt.
+The scripts contained in this repo are licensed under the GNU GENERAL PUBLIC LICENSE Version 3 (see LICENSE).
+You are REQUIRED to provide the complete source code under the SAME licence (per the terms of the GPLv3) if you make any changes.
+The additional programs required for pat-winlink-print to function are licensed separately (see the source code for each for more information).
+
+FOR
+---------------
+Pat v0.12.1 (unknown origin) linux/amd64 - go1.17.3
+Also known as "pat-winlink"
+
+ASSUMES
+---------------
+1. You have started pat-winlink with the "pat-winlink http" command.
+2. You have downloaded the messages from the CMS (either by radio or telnet).
+3. You've opened a message and want to print it.
+
+WHAT
+---------------
+A rough BASH user interface to allow me to select which directory to go to and which message to print.
+
+WHY
+---------------
+The current version of pat-winlink (Pat v0.12.1 (unknown origin) linux/amd64 - go1.17.3) doesn't provide a way to print your messages.
+
+DIRECTORIES
+---------------
+It'll work a lot better if you keep the scripts in your home directory under a "pat-winlink-print" directory, or you'll have to modify all of the scripts.
+
+REQUIRES
+---------------
+BASH shell
+dos2unix
+python3
+python3-selenium from your distro
+firefox (because that's what I use)
+pat-winlink
+dialog
+cat, date, awk, sed, tr, basename, grep, ps, cut, head, kill, rm (standard in all distros)
+
+A CALLSIGN LOGO (MUST be in the pat-winlink-print directory, AND be a 758x120px PNG file!)
+
+BEFORE RUNNING
+---------------
+1. Make your callsign logo as above using whatever graphics program you prefer.  Just make sure it's 758x120px and that it's saved as a PDF file
+   in the pat-winlink-print directory.  It MUST be named <CALLSIGN>.png!
+
+2. Edit the pat-print-gui file:
+      Replace CALLSIGNREPLACE with your actual callsign.
+      Change the working directory to where ever you put these scripts if you absolutely didn't want them in the default directory.
+           You'll have to change the directory in selenium-print.py to reflect what ever you changed it to (see the DIR variable in the file).
+
+RUNNING
+---------------
+1. Write down the message ID from the message you want to print.
+2. Because of the way dialog works, you can use your mouse to highlight the directory by double-clicking, then you MUST select it with <SPACE> and press enter.
+   Then you'll highlight the message file using the same method.  ONLY <SPACE> will select the file.  Then press enter.
+   
+3. Firefox will pop up a new window with the file to be printed, send it to your printer and then close itself.  So far, I can have Firefox open at the same time and this only
+   kills the pop-up window from the script.
+
+4. Click okay to exit the program.
