@@ -8,6 +8,14 @@ The scripts are not provided with any warranty for fitness for any purpose.
 I may or not update them.  I will provide any changes I make to the repo, but otherwise provide NO SUPPORT.  If you make it work better, I'd appreciate
 a heads up so I can roll your changes into the repo (with appropriate credit).
 
+LIABILITY
+---------------
+You've downloaded something from the internet and starting running it in a shell causing it to start executing commands.
+I'm not liable for anything you do with these scripts or if they damage your computer, cause your house to burn down, start WW III,
+stop global warming (though I'd happily take credit for THAT one) or anything else you can think of.
+It's up to YOU to examine the scripts to make sure they won't screw up your system or send me every penny you have in your bank account.
+If you can't understand the scripts, DON'T USE THEM!
+
 LICENSES
 ---------------
 If you received these scripts without a GNU GPLv3 license file, please obtain it at https://www.gnu.org/licenses/gpl-3.0.txt.
