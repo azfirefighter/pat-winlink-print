@@ -12,13 +12,12 @@ clear
 export CALLSIGN="UNSET" # MUST be in the pat-winlink-print/images directory, AND be a 758x120px PNG file!
 
 #-------- THOU SHALL NOT MESSETH AROUND BELOW HERE! --------
-
+export USERNAME=$(whoami)
 APPLICATIONDIR="/home/$USERNAME/.local/share/applications/"
 APPNAME="pat-print-gui"
 export WORKING="/home/$USERNAME/pat-winlink-print"
 export DATA="/home/$USERNAME/.local/share/pat/mailbox/$CALLSIGN"
 export BUILD="build"
-export USERNAME=$(whoami)
 export WHEN=$(date)
 export FILE=""
 export FILEPATH=""
@@ -141,12 +140,12 @@ if [ ! -f $WORKING/.setupdone ];then
           ansi::left_right "Configuring print script." "$(ansi::fg red; ansi::bold)ERROR$(ansi::reset)" 80
           ansi::bold;echo "selenium-print.py was not configured.\nPlease follow the instructions in \"PRINTCONFIG\" to configure it manually.\nEXITING SETUP!";ansi::reset
           exit
+     fi
      ansi::left_right "Configuring print script." "$(ansi::fg green)DONE$(ansi::reset)" 80
      ansi::hnline
      ansi::left_right "Initial configuration" "$(ansi::fg green)COMPLETE$(ansi::reset)" 80
      touch $WORKING/.setupdone; sleep 5s
-     ansi::heading "You may now start the program via the icon in your menu.\nIf you don't see it, please log out and log back in."
-     echo 
+     ansi::heading "You may now start the program via the icon in your menu.\nIf you don't see it, please log out and log back in." 
      exit
 fi
 # Make the temporary build directory to hold the files needed to build the output.  Skip it if it's already there.
@@ -231,4 +230,3 @@ unset WHEN
 unset PID
 unset USERNAME
 unset DATA
-exit
