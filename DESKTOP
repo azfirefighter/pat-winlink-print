@@ -20,5 +20,5 @@ Log out and back in and it should be in your menu.
           Terminal=false
           Exec=$WORKING/$APPNAME
           Name=Pat Winlink Print
-          Icon=$WORKING/$APPNAME/images/logo.png
+          Icon=$WORKING/images/logo.png
 #-------- END --------

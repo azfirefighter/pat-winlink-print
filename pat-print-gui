@@ -9,7 +9,7 @@ clear
 
 # USER Variables
 #-------- CHANGE THESE AS NEEDED --------
-export CALLSIGN="" # MUST be in the pat-winlink-print/images directory, AND be a 758x120px PNG file!
+export CALLSIGN="UNSET" # MUST be in the pat-winlink-print/images directory, AND be a 758x120px PNG file!
 
 #-------- THOU SHALL NOT MESSETH AROUND BELOW HERE! --------
 export USERNAME=$(whoami)
