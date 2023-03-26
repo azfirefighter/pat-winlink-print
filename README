@@ -93,6 +93,9 @@ BEFORE RUNNING
       it will go back through the setup process, so leave it alone unless you
       want that.
 
+4.  There is currently NO EASY way to quit if you accidentally started the
+      program.  I'm working on that one still.
+
 RUNNING
 ---------------
 1. Write down the message ID from the message you want to print.
