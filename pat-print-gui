@@ -15,7 +15,7 @@ export CALLSIGN="UNSET" # MUST be in the pat-winlink-print/images directory, AND
 export USERNAME=$(whoami)
 APPLICATIONDIR="/home/$USERNAME/.local/share/applications/"
 APPNAME="pat-print-gui"
-export WORKING="/home/$USERNAME/pat-winlink-print"
+export WORKING="/home/$USERNAME/pat-winlink-print-local"
 export DATA="/home/$USERNAME/.local/share/pat/mailbox/$CALLSIGN"
 export BUILD="build"
 export WHEN=$(date)
@@ -109,8 +109,8 @@ if [ ! -f $WORKING/.setupdone ];then
           ansi::bold;echo "EXITING SETUP!";ansi::reset
           exit
      fi
-     ansi::left_right "Callsign set?" "$(ansi::fg green)FOUND$(ansi::reset)" 80
-     if [ ! -f $WORKING/images/$CALLSIGN.png ];then
+     ansi::left_right "Callsign set?" "$(ansi::fg green)$CALLSIGN$(ansi::reset)" 80
+     if [ ! -f images/$CALLSIGN.png ];then
           ansi::bell;ansi::bell;ansi::bell
           ansi::left_right "Callsign logo present?" "$(ansi::fg red; ansi::bold)NOT FOUND$(ansi::reset)" 80
           ansi::bold;echo "EXITING SETUP!";ansi::reset
