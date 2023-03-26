@@ -1,3 +1,5 @@
+pat-winlink-print version 0.5
+
 AUTHOR
 ---------------
 Jason Todd, WY7EMT
@@ -5,23 +7,29 @@ Jason Todd, WY7EMT
 WARRANTY
 ---------------
 The scripts are not provided with any warranty for fitness for any purpose.
-I may or not update them.  I will provide any changes I make to the repo, but otherwise provide NO SUPPORT.  If you make it work better, I'd appreciate
+I may or not update them.  I will provide any changes I make to the repo, but
+otherwise provide NO SUPPORT.  If you make it work better, I'd appreciate
 a heads up so I can roll your changes into the repo (with appropriate credit).
 
 LIABILITY
 ---------------
-You've downloaded something from the internet and starting running it in a shell causing it to start executing commands.
-I'm not liable for anything you do with these scripts or if they damage your computer, cause your house to burn down, start WW III,
-stop global warming (though I'd happily take credit for THAT one) or anything else you can think of.
-It's up to YOU to examine the scripts to make sure they won't screw up your system or send me every penny you have in your bank account.
-If you can't understand the scripts, DON'T USE THEM!
+You've downloaded something from the internet and starting running it in a shell
+causing it to start executing commands.  I'm not liable for anything you do with
+these scripts or if they damage your computer, cause your house to burn down,
+start WW III, stop global warming (though I'd happily take credit for THAT one)
+or anything else you can think of.  It's up to YOU to examine the scripts to
+make sure they won't screw up your system or send me every penny you have in
+your bank account.  If you can't understand the scripts, DON'T USE THEM!
 
 LICENSES
 ---------------
-If you received these scripts without a GNU GPLv3 license file, please obtain it at https://www.gnu.org/licenses/gpl-3.0.txt.
-The scripts contained in this repo are licensed under the GNU GENERAL PUBLIC LICENSE Version 3 (see LICENSE).
-You are REQUIRED to provide the complete source code under the SAME licence (per the terms of the GPLv3) if you make any changes.
-The additional programs required for pat-winlink-print to function are licensed separately (see the source code for each for more information).
+If you received these scripts without a GNU GPLv3 license file, please obtain it
+at https://www.gnu.org/licenses/gpl-3.0.txt.  The scripts contained in this repo
+are licensed under the GNU GENERAL PUBLIC LICENSE Version 3 (see LICENSE).
+You are REQUIRED to provide the complete source code under the SAME licence
+(per the terms of the GPLv3) if you make any changes.  The additional programs
+required for pat-winlink-print to function are licensed separately
+(see the source code for each for more information).
 
 FOR
 ---------------
@@ -36,15 +44,19 @@ ASSUMES
 
 WHAT
 ---------------
-A rough BASH user interface to allow me to select which directory to go to and which message to print.
+A rough BASH user interface to allow me to select which directory to go to and
+which message to print.
 
 WHY
 ---------------
-The current version of pat-winlink (Pat v0.12.1 (unknown origin) linux/amd64 - go1.17.3) doesn't provide a way to print your messages.
+The current version of pat-winlink
+(Pat v0.12.1 (unknown origin) linux/amd64 - go1.17.3) 
+doesn't provide a way to print your messages.
 
 DIRECTORIES
 ---------------
-It'll work a lot better if you keep the scripts in your home directory under a "pat-winlink-print" directory, or you'll have to modify all of the scripts.
+It'll work a lot better if you keep the scripts in your home directory under a 
+"pat-winlink-print" directory, or you'll have to modify all of the scripts.
 
 REQUIRES
 ---------------
@@ -54,28 +66,49 @@ python3
 python3-selenium from your distro
 firefox (because that's what I use)
 pat-winlink
-dialog
-cat, date, awk, sed, tr, basename, grep, ps, cut, head, kill, rm (standard in all distros)
+zenity
 
-A CALLSIGN LOGO (MUST be in the pat-winlink-print directory, AND be a 758x120px PNG file!)
+A CALLSIGN LOGO (MUST be in the pat-winlink-print directory, AND be a
+758x120px PNG file!)
 
 BEFORE RUNNING
 ---------------
-1. Make your callsign logo as above using whatever graphics program you prefer.  Just make sure it's 758x120px and that it's saved as a PDF file
-   in the pat-winlink-print directory.  It MUST be named <CALLSIGN>.png!
+1. Make your callsign logo as above using whatever graphics program you prefer. 
+      Just make sure it's 758x120px and that it's saved as a PDF file
+      in the pat-winlink-print directory.  It MUST be named <CALLSIGN>.png!
 
 2. Edit the pat-print-gui file:
       Replace CALLSIGNREPLACE with your actual callsign.
-      Change the working directory to where ever you put these scripts if you absolutely didn't want them in the default directory.
-           You'll have to change the directory in selenium-print.py to reflect what ever you changed it to (see the DIR variable in the file).
+      Change the working directory to where ever you put these scripts if you
+      absolutely didn't want them in the default directory.
+      You'll have to change the directory in selenium-print.py to reflect what
+      ever you changed it to (see the DIR variable in the file or the
+      PRINTCONFIG file.).
+
+3. The first time you run the script, it will perform some basic configuration
+      that verifies the CALLSIGN.png file exists, your callsign has been added
+      to the script and creates the necessary directories.  It will also create
+      a file named ".setupdone".  This tells the program that setup has been
+      completed.  If you delete this file, the next time you run the program,
+      it will go back through the setup process, so leave it alone unless you
+      want that.
 
 RUNNING
 ---------------
 1. Write down the message ID from the message you want to print.
-2. Because of the way dialog works, you can use your mouse to highlight the directory by double-clicking, then you MUST select it with <SPACE> and press enter.
-   Then you'll highlight the message file using the same method.  ONLY <SPACE> will select the file.  Then press enter.
-   
-3. Firefox will pop up a new window with the file to be printed, send it to your printer and then close itself.  So far, I can have Firefox open at the same time and this only
-   kills the pop-up window from the script.
 
-4. Click okay to exit the program.
+2. The setup routine should've installed an icon in your menu that you can use
+   to start the program.  If not, see the file "DESKTOP" for instructions.
+   After clicking it, it will open a file chooser window in your pat-winlink
+   local mailbox.
+   
+3.  Double-click on the directory that has the message you want to print and
+    then double click on the appropriate message file (you DID right the
+    message number down, right).
+   
+4. Firefox will pop up a new window with the file to be printed, send it to
+   your printer and then close itself.  So far, I can have Firefox open at the
+   same time and this only kills the pop-up window from the script.
+
+5. Click okay to exit the program.
+

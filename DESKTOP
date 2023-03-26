@@ -1,0 +1,24 @@
+#-------- DESKTOP --------
+There are are TWO variables that need to replaced with actual information.
+1. $WORKING.....should be changed to the directory that you're currently in
+                (/home/USERNAME/pat-winlink-print)
+2. $APPNAME.....should always be pat-print-gui
+
+Change them below, then copy the text between START and END into a new
+text file named "pat-winlink-print.desktop".
+
+Move the "pat-winlink-print.desktop" file to
+/home/USERNAME/.local/share/applications.
+
+Log out and back in and it should be in your menu.
+
+#-------- START --------
+[Desktop Entry]
+          Encoding=UTF-8
+          Version=1.0
+          Type=Application
+          Terminal=false
+          Exec=$WORKING/$APPNAME
+          Name=Pat Winlink Print
+          Icon=$WORKING/$APPNAME/images/logo.png
+#-------- END --------

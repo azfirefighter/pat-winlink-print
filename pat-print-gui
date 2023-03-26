@@ -1,12 +1,25 @@
 #!/bin/bash
 
-# Variables
-#-------- CHANGE THESE AS NEEDED --------
-export CALLSIGN="CALLSIGNREPLACE" # MUST be in the pat-winlink-print directory, AND be a 758x120px PNG file!
-export WORKING="/home/jason/pat-winlink-print" # This is the directory where you installed all of this
+# BEFORE RUNNING:
+# 1. Make sure you have a callsign logo saved in the images directory.  Must be titled "CALLSIGN.png" and be 758x100px.
+# 2. Edit your callsign below.
+# 3. NOW you can run the program.
 
-#-------- DON'T MESS AROUND BELOW HERE! --------
+clear
+
+# USER Variables
+#-------- CHANGE THESE AS NEEDED --------
+export CALLSIGN="UNSET" # MUST be in the pat-winlink-print/images directory, AND be a 758x120px PNG file!
+
+#-------- THOU SHALL NOT MESSETH AROUND BELOW HERE! --------
+
+APPLICATIONDIR="/home/$USERNAME/.local/share/applications/"
+APPNAME="pat-print-gui"
+export WORKING="/home/$USERNAME/pat-winlink-print"
+export DATA="/home/$USERNAME/.local/share/pat/mailbox/$CALLSIGN"
 export BUILD="build"
+export USERNAME=$(whoami)
+export WHEN=$(date)
 export FILE=""
 export FILEPATH=""
 export FROM=""
@@ -16,8 +29,22 @@ export PRINTDOC=""
 export MID=""
 export FROM=""
 export PRECEDENCE=""
-export WHEN=$(date)
 export PID=""
+
+
+#-------- ROUTINES --------
+desktopfile () {
+          cat <<AAAA
+          [Desktop Entry]
+          Encoding=UTF-8
+          Version=1.0
+          Type=Application
+          Terminal=false
+          Exec=$WORKING/$APPNAME
+          Name=Pat Winlink Print
+          Icon=$WORKING/$APPNAME/images/logo.png
+          AAAA
+}
 
 # Initial part of the HTML file as a template - works better than other solutions I've tried.
 
@@ -69,28 +96,78 @@ cat << AAAA
 AAAA
 }
 
-
+# VERY basic initial setup
+if [ ! -f $WORKING/.setupdone ];then
+     source $WORKING/lib/ansi.sh
+     ansi::bold
+     ansi::heading "pat-winlink-print setup for $USERNAME"
+     ansi::reset
+     ansi::fg yellow; echo "Performing initial setup."
+     ansi::hnline
+     if [ $CALLSIGN == "UNSET" ];then
+          ansi::bell;ansi::bell;ansi::bell
+          ansi::left_right "Callsign set?" "$(ansi::fg red; ansi::bold)NOT SET$(ansi::reset)" 80
+          ansi::bold;echo "EXITING SETUP!";ansi::reset
+          exit
+     fi
+     ansi::left_right "Callsign set?" "$(ansi::fg green)FOUND$(ansi::reset)" 80
+     if [ ! -f $WORKING/images/$CALLSIGN.png ];then
+          ansi::bell;ansi::bell;ansi::bell
+          ansi::left_right "Callsign logo present?" "$(ansi::fg red; ansi::bold)NOT FOUND$(ansi::reset)" 80
+          ansi::bold;echo "EXITING SETUP!";ansi::reset
+          exit
+     fi
+     ansi::left_right "Callsign logo present?" "$(ansi::fg green)FOUND$(ansi::reset)" 80
+     mkdir $WORKING/$BUILD
+     if [ ! -d $WORKING/$BUILD ];then
+          ansi::bell;ansi::bell;ansi::bell
+          ansi::left_right "Creating build directory." "$(ansi::fg red; ansi::bold)ERROR$(ansi::reset)" 80
+          ansi::bold;echo "Build directory not created.\nPlease create it manually via \"mkdir build\".\nEXITING SETUP!";ansi::reset
+          exit
+     fi
+     ansi::left_right "Creating build directory." "$(ansi::fg green)DONE$(ansi::reset)" 80
+     desktopfile > $APPLICATIONDIR/$APPNAME.desktop
+     if [ ! -f $APPLICATIONDIR/$APPNAME.desktop ];then
+          ansi::bell;ansi::bell;ansi::bell
+          ansi::left_right "Adding program to your menu." "$(ansi::fg red; ansi::bold)ERROR$(ansi::reset)" 80
+          ansi::bold;echo "$APPNAME.desktop was not created.\nPlease follow the instructions in \"DESKTOP\" to create it manually.\nEXITING SETUP!";ansi::reset
+          exit
+     fi
+     ansi::left_right "Adding program to your menu." "$(ansi::fg green)DONE$(ansi::reset)" 80
+     OUTPUT="file://$WORKING/$BUILD/print.html"
+     sed -i "s|\.FIXME\.|$OUTPUT|g" $WORKING/selenium-print.py
+     if [ $? != 0 ];then
+          ansi::bell;ansi::bell;ansi::bell
+          ansi::left_right "Configuring print script." "$(ansi::fg red; ansi::bold)ERROR$(ansi::reset)" 80
+          ansi::bold;echo "selenium-print.py was not configured.\nPlease follow the instructions in \"PRINTCONFIG\" to configure it manually.\nEXITING SETUP!";ansi::reset
+          exit
+     ansi::left_right "Configuring print script." "$(ansi::fg green)DONE$(ansi::reset)" 80
+     ansi::hnline
+     ansi::left_right "Initial configuration" "$(ansi::fg green)COMPLETE$(ansi::reset)" 80
+     touch $WORKING/.setupdone; sleep 5s
+     ansi::heading "You may now start the program via the icon in your menu.\nIf you don't see it, please log out and log back in."
+     echo 
+     exit
+fi
 # Make the temporary build directory to hold the files needed to build the output.  Skip it if it's already there.
 
-if [ ! -d $WORKING/$BUILD ]; then
-	mkdir $WORKING/$BUILD
-fi
 
 # Select the file to print and assign to FILE
-DIR=$(dialog --title "Select the appropriate directory." --dselect "/home/jason/.local/share/pat/mailbox/WY7EMT/" "30" "50" --stdout)
-DIR="$DIR/"
+#DIR=$(dialog --title "Select the appropriate directory." --dselect "/home/jason/.local/share/pat/mailbox/WY7EMT/" "30" "50" --stdout)
+#DIR="$DIR/"
 
-FILEPATH=$(dialog --title "Select a file to print." --fselect $DIR  "100" "250" --stdout)
+cd $DATA
+FILEPATH=$(zenity --title "Select a file to print." --file-selection)
 FILE=$(basename "$FILEPATH")
 
-dialog --title "Working" --infobox "Performing our magic behind the scenes..." "15" "30"
+#dialog --title "Working" --infobox "Performing our magic behind the scenes..." "15" "30"
+zenity --title "Message selected!" --info --text "Click OK to continue! " "15" "30"
 
 # Make sure that the line endings are correct for *nix
 dos2unix $FILEPATH > /dev/null 2>&1
 
 # Get the headers and write out to file
 cat $FILEPATH | sed '/^$/q' | sed 's/\n/<br>/ p' > $WORKING/$BUILD/$FILE.header
-
 
 # Grab the sender from the following header
 export MID=$(echo $FILE | cut -f 1 -d '.')
@@ -116,16 +193,13 @@ cat $FILEPATH | tr -d '\r' | sed '1,/^$/d' > $WORKING/$BUILD/$MID.body
 sed -i 's/$/\<br\>/' $WORKING/$BUILD/$MID.body
 
 # The output filename MUST stay the same!  I had to hard wire it into the python script that prints it.
-
-# Outputs the templates above with the variables shown. LEAVE THE FILE NAME ALONE - it's hardcoded into the print script!
 template1 $MID $FROM $WORKING $CALLSIGN $PRECEDENCE > $WORKING/$BUILD/print.html
-cat $WORKING/$BUILD/$MID.header >> $WORKING/$BUILD/print.html # Adds the information from the message's header
+cat $WORKING/$BUILD/$MID.header >> $WORKING/$BUILD/print.html
 template2 >> $WORKING/$BUILD/print.html
-cat $WORKING/$BUILD/$MID.body >> $WORKING/$BUILD/print.html # Adds the information from the message's body
+cat $WORKING/$BUILD/$MID.body >> $WORKING/$BUILD/print.html
 template3 $WHEN >> $WORKING/$BUILD/print.html
 
-
-dialog --title "Printing" --infobox "Your message will print to your default printer." "15" "20"
+zenity --title "Ready to print!" --info --text "Click OK to print message!"
 
 # Print it!
 $WORKING/selenium-print.py > /dev/null 2>&1
@@ -135,7 +209,7 @@ $WORKING/selenium-print.py > /dev/null 2>&1
 PID=$(ps -xa | grep "firefox --marionette" | head -n1 | awk '{print $1}' FS=" ")
 kill -9 $PID
 
-dialog --title "Printing Complete!" --msgbox "Click OK to end." "10" "20"
+zenity --title "Done!" --info --text "Click OK to end."
 
 # Clean up the build directory
 rm $WORKING/$BUILD/*
@@ -155,3 +229,6 @@ unset FROM
 unset PRECEDENCE
 unset WHEN
 unset PID
+unset USERNAME
+unset DATA
+exit

@@ -1,0 +1,14 @@
+#-------- PRINTCONFIG --------
+
+The "selenium-print.py" script is what actually prints the message, so it's important to set it
+to print the correct file.
+
+Open the script in a text editor and look for the line that says:
+
+DIR=".FIXME."
+
+Replace .FIXME with:
+
+file:///home/USERNAME/pat-winlink-print/build/print.html
+
+Remember to keep that between the quotation marks.
