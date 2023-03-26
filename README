@@ -74,7 +74,7 @@ A CALLSIGN LOGO (MUST be in the pat-winlink-print directory, AND be a
 BEFORE RUNNING
 ---------------
 1. Make your callsign logo as above using whatever graphics program you prefer. 
-      Just make sure it's 758x120px and that it's saved as a PDF file
+      Just make sure it's 758x120px and that it's saved as a PNG file
       in the pat-winlink-print directory.  It MUST be named <CALLSIGN>.png!
 
 2. Edit the pat-print-gui file:
