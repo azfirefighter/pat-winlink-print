@@ -3,7 +3,7 @@ from selenium import webdriver
 import os
 import time
 
-DIR = ".FIXME."
+DIR = "file:///home/jason/pat-winlink-print/build/print.html"
 
 class printing_browser(object):
     def __init__(self):
